@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pulse · Changelog &amp; Status</title>
+  <meta name="description" content="Release notes and system status for Pulse.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Pulse</span>
+      </a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#status">Status</a>
+        <a href="#changelog">Changelog</a>
+        <a href="#incidents">Incidents</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="status" class="status-section" aria-labelledby="status-heading">
+      <h1 id="status-heading" class="visually-hidden">Current status</h1>
+      <div class="status-card">
+        <span id="status-badge" class="status-badge" data-level="operational">Loading…</span>
+        <p id="status-message" class="status-message"></p>
+        <p id="status-updated" class="status-updated"></p>
+      </div>
+    </section>
+
+    <section id="changelog" class="changelog-section" aria-labelledby="changelog-heading">
+      <div class="section-head">
+        <h2 id="changelog-heading">Changelog</h2>
+        <p class="section-sub">What shipped, newest first.</p>
+      </div>
+      <ol id="release-list" class="release-list" aria-live="polite"></ol>
+    </section>
+
+    <section id="incidents" class="incidents-section" aria-labelledby="incidents-heading">
+      <div class="section-head">
+        <h2 id="incidents-heading">Incident history</h2>
+        <p class="section-sub">Past disruptions and how long they lasted.</p>
+      </div>
+      <ol id="incident-list" class="incident-list"></ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Pulse is a static changelog and status page. Content lives in <code>data/changelog.json</code>.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

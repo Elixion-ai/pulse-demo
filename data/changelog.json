@@ -1,0 +1,58 @@
+{
+  "status": {
+    "level": "operational",
+    "message": "All services are running normally.",
+    "updated_at": "2026-10-20"
+  },
+  "releases": [
+    {
+      "version": "1.2.0",
+      "date": "2026-10-18",
+      "title": "Incident history on the status page",
+      "tag": "Feature",
+      "description": "Past incidents now appear below the changelog with their start time, duration and a short summary."
+    },
+    {
+      "version": "1.1.1",
+      "date": "2026-10-11",
+      "title": "Release dates rendered in the reader's locale",
+      "tag": "Fix",
+      "description": "Dates were shown as raw ISO strings in some browsers. They now use the visitor's locale formatting."
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-10-04",
+      "title": "Status badge with last-updated time",
+      "tag": "Feature",
+      "description": "The header card shows the current system status and when it was last updated, both read from the data file."
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-09-27",
+      "title": "Improved spacing on small screens",
+      "tag": "Improvement",
+      "description": "Release cards and the incident timeline stack cleanly at phone width."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-09-20",
+      "title": "Initial public release",
+      "tag": "Feature",
+      "description": "Pulse goes live as a static changelog page served from GitHub Pages, rendering releases from a JSON file."
+    }
+  ],
+  "incidents": [
+    {
+      "title": "Delayed page updates",
+      "started_at": "2026-10-09T14:05:00Z",
+      "resolved_at": "2026-10-09T14:47:00Z",
+      "summary": "A misconfigured deployment published a stale build for about forty minutes. Re-running the deployment restored the current content."
+    },
+    {
+      "title": "Changelog failed to load",
+      "started_at": "2026-09-30T08:12:00Z",
+      "resolved_at": "2026-09-30T08:20:00Z",
+      "summary": "A malformed JSON entry broke rendering. The entry was corrected and a validation step was added before publishing."
+    }
+  ]
+}

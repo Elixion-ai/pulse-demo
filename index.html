@@ -4,14 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pulse · Changelog &amp; Status</title>
-  <meta name="description" content="Release notes and system status for Pulse.">
+  <meta name="description" content="Release notes and live status for Pulse.">
+  <meta name="theme-color" content="#0b1020">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora-blob b1"></span>
+    <span class="aurora-blob b2"></span>
+    <span class="aurora-blob b3"></span>
+  </div>
+
   <header class="site-header">
     <div class="container header-row">
-      <a class="brand" href="./">
-        <span class="brand-mark" aria-hidden="true"></span>
+      <a class="brand" href="./" aria-label="Pulse home">
+        <span class="brand-mark" aria-hidden="true"><span class="brand-dot"></span></span>
         <span class="brand-name">Pulse</span>
       </a>
       <nav class="site-nav" aria-label="Sections">
@@ -22,36 +32,74 @@
     </div>
   </header>
 
-  <main class="container">
-    <section id="status" class="status-section" aria-labelledby="status-heading">
-      <h1 id="status-heading" class="visually-hidden">Current status</h1>
-      <div class="status-card">
-        <span id="status-badge" class="status-badge" data-level="operational">Loading…</span>
-        <p id="status-message" class="status-message"></p>
-        <p id="status-updated" class="status-updated"></p>
+  <main>
+    <section id="status" class="hero" aria-labelledby="hero-heading">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span id="hero-badge" class="status-pill" data-level="operational"><span class="pill-dot"></span><span id="hero-badge-text">Checking status…</span></span></p>
+          <h1 id="hero-heading" class="hero-title">Everything you ship,<br><span class="gradient-text">and whether it's up.</span></h1>
+          <p id="hero-tagline" class="hero-sub"></p>
+          <p id="hero-updated" class="hero-updated"></p>
+        </div>
+
+        <div class="hero-card glass reveal">
+          <svg class="heartbeat" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="hb-grad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stop-color="#22d3ee"/>
+                <stop offset="0.5" stop-color="#6366f1"/>
+                <stop offset="1" stop-color="#ec4899"/>
+              </linearGradient>
+            </defs>
+            <path class="hb-line" d="M0,60 L120,60 L140,60 L155,20 L170,100 L185,40 L200,60 L320,60 L335,25 L350,95 L365,45 L380,60 L520,60 L535,30 L550,90 L565,50 L580,60 L600,60"/>
+          </svg>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value"><span id="stat-uptime" data-count="0">0</span><span class="stat-unit">%</span></span>
+              <span class="stat-label">90-day uptime</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-releases" data-count="0">0</span>
+              <span class="stat-label">releases shipped</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-incidents" data-count="0">0</span>
+              <span class="stat-label">incidents, all resolved</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section id="changelog" class="changelog-section" aria-labelledby="changelog-heading">
-      <div class="section-head">
+    <section class="components container" aria-labelledby="components-heading">
+      <div class="section-head reveal">
+        <h2 id="components-heading">System health</h2>
+        <p class="section-sub">Last 90 days, per component. Hover a day to see it.</p>
+      </div>
+      <ul id="component-list" class="component-list"></ul>
+    </section>
+
+    <section id="changelog" class="changelog container" aria-labelledby="changelog-heading">
+      <div class="section-head reveal">
         <h2 id="changelog-heading">Changelog</h2>
         <p class="section-sub">What shipped, newest first.</p>
       </div>
-      <ol id="release-list" class="release-list" aria-live="polite"></ol>
+      <ol id="release-list" class="timeline" aria-live="polite"></ol>
     </section>
 
-    <section id="incidents" class="incidents-section" aria-labelledby="incidents-heading">
-      <div class="section-head">
+    <section id="incidents" class="incidents container" aria-labelledby="incidents-heading">
+      <div class="section-head reveal">
         <h2 id="incidents-heading">Incident history</h2>
-        <p class="section-sub">Past disruptions and how long they lasted.</p>
+        <p class="section-sub">Every disruption, how long it lasted, and what we learned.</p>
       </div>
       <ol id="incident-list" class="incident-list"></ol>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <p>Pulse is a static changelog and status page. Content lives in <code>data/changelog.json</code>.</p>
+    <div class="container footer-row">
+      <p><strong>Pulse</strong> is a static changelog and status page. Everything on it comes from <code>data/changelog.json</code>.</p>
+      <p class="footer-meta">Managed in Elixion · changes land through pull requests</p>
     </div>
   </footer>
 

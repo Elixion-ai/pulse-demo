@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install jsonschema
+        run: pip install jsonschema
+
       - name: Validate before publishing
         run: python3 scripts/validate.py
 

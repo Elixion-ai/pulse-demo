@@ -1,0 +1,18 @@
+name: Validate changelog
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate changelog.json against schema
+        run: python3 scripts/validate.py

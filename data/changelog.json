@@ -13,7 +13,8 @@
     { "id": "api", "name": "Public API", "level": "operational", "incident_days": ["2026-10-09"] },
     { "id": "dashboard", "name": "Dashboard", "level": "operational", "incident_days": ["2026-09-30"] },
     { "id": "agents", "name": "AI Agents", "level": "operational", "incident_days": [] },
-    { "id": "webhooks", "name": "Webhooks & Integrations", "level": "operational", "incident_days": ["2026-10-09"] }
+    { "id": "webhooks", "name": "Webhooks & Integrations", "level": "operational", "incident_days": ["2026-10-09"] },
+    { "id": "billing", "name": "Billing", "level": "operational", "incident_days": ["2026-10-14"] }
   ],
   "releases": [
     {

@@ -81,6 +81,24 @@ code { font-family: var(--mono); font-size: 0.85em; background: var(--surface-st
 }
 .site-nav a:hover { color: var(--text); background: var(--surface-strong); }
 
+/* ---------- Maintenance banner ---------- */
+#maintenance-banner[hidden] { display: none; }
+#maintenance-banner {
+  background: #fde68a;
+  border-bottom: 1px solid #b45309;
+}
+.maintenance-inner {
+  padding-top: 14px; padding-bottom: 14px;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px;
+  color: #422006;
+}
+.maintenance-title { margin: 0; font-weight: 700; font-size: 0.98rem; color: #422006; }
+.maintenance-window {
+  margin: 0; font-family: var(--mono); font-size: 0.85rem;
+  font-weight: 600; color: #713f12;
+}
+.maintenance-message { margin: 0; flex-basis: 100%; font-size: 0.92rem; color: #4a2c0a; }
+
 /* ---------- Hero ---------- */
 .hero { padding: 88px 0 56px; }
 .hero-grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 40px; align-items: center; }

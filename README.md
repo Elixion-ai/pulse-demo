@@ -34,3 +34,10 @@ python3 -m http.server 8080
 ```
 
 This project is managed in Elixion; tasks are implemented by AI agents through pull requests.
+
+## CI and deployment
+
+- `CI / validate` runs on every pull request: it checks `data/changelog.json` against the shape `app.js` expects, syntax-checks `app.js`, and serves the site to make sure every asset loads.
+- `Deploy to GitHub Pages` runs on every push to `main` and publishes the site. It writes `data/deploy.json` with the deployed commit so the page can show which commit is live.
+
+Changes land through pull requests. Elixion merges an issue's pull request when the issue is moved to Done; the deploy workflow then publishes it within about a minute.

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate changelog data and HTML references
+        run: python3 scripts/validate.py
+
+      - name: Syntax-check app.js
+        run: node --check app.js
+
+      - name: Serve the site and fetch every asset
+        run: |
+          python3 -m http.server 8080 --bind 127.0.0.1 >/dev/null 2>&1 &
+          sleep 1
+          for f in index.html styles.css app.js data/changelog.json; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080/$f")
+            echo "$f -> $code"
+            [ "$code" = "200" ] || exit 1
+          done

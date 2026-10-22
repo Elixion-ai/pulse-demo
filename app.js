@@ -65,7 +65,51 @@
     requestAnimationFrame(frame);
   }
 
+  function formatTimeWindow(startIso, endIso) {
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    const startValid = !Number.isNaN(start.getTime());
+    const endValid = !Number.isNaN(end.getTime());
+    const dateOpts = { year: 'numeric', month: 'short', day: 'numeric' };
+    const timeOpts = { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
+    if (!startValid && !endValid) return '';
+    if (!startValid) return `until ${end.toLocaleString(undefined, { ...dateOpts, ...timeOpts })}`;
+    if (!endValid) return `from ${start.toLocaleString(undefined, { ...dateOpts, ...timeOpts })}`;
+    const sameDay = start.toDateString() === end.toDateString();
+    const startStr = start.toLocaleString(undefined, { ...dateOpts, ...timeOpts });
+    const endStr = sameDay
+      ? end.toLocaleString(undefined, timeOpts)
+      : end.toLocaleString(undefined, { ...dateOpts, ...timeOpts });
+    return `${startStr} – ${endStr}`;
+  }
+
   // ---------- renderers ----------
+  function renderMaintenance(maintenance) {
+    const banner = document.getElementById('maintenance-banner');
+    if (!banner) return;
+    banner.hidden = true;
+    banner.innerHTML = '';
+
+    if (!maintenance || !maintenance.ends_at) return;
+    const ends = new Date(maintenance.ends_at);
+    if (Number.isNaN(ends.getTime()) || ends.getTime() <= Date.now()) return;
+
+    const children = [];
+    if (maintenance.title) {
+      children.push(el('p', { class: 'maintenance-title', text: maintenance.title }));
+    }
+    const timeWindow = formatTimeWindow(maintenance.starts_at, maintenance.ends_at);
+    if (timeWindow) {
+      children.push(el('p', { class: 'maintenance-window', text: timeWindow }));
+    }
+    if (maintenance.message) {
+      children.push(el('p', { class: 'maintenance-message', text: maintenance.message }));
+    }
+
+    banner.appendChild(el('div', { class: 'container maintenance-inner', role: 'status' }, children));
+    banner.hidden = false;
+  }
+
   function renderHero(data) {
     const labels = { operational: 'All systems operational', degraded: 'Degraded performance', outage: 'Major outage' };
     const level = (data.status && data.status.level) || 'operational';
@@ -226,6 +270,7 @@
       const response = await fetch(DATA_URL, { cache: 'no-cache' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
+      renderMaintenance(data.maintenance);
       renderHero(data);
       renderComponents(data.components, data.incidents);
       renderReleases(data.releases);

@@ -135,6 +135,81 @@
     });
   }
 
+  function releaseUrl(id) {
+    const base = window.location.href.split('#')[0];
+    return `${base}#${id}`;
+  }
+
+  function makeCopyButton(id, version) {
+    const label = el('span', { class: 'copy-link-label', text: 'Copy link' });
+    const button = el('button', {
+      type: 'button',
+      class: 'copy-link',
+      'aria-label': `Copy link to release v${version}`,
+      title: 'Copy link to this release',
+    }, [
+      el('span', { class: 'copy-link-icon', 'aria-hidden': 'true' }),
+      label,
+    ]);
+
+    let resetTimer = null;
+    button.addEventListener('click', async () => {
+      const url = releaseUrl(id);
+      try {
+        await copyToClipboard(url);
+        button.classList.add('copied');
+        label.textContent = 'Copied';
+        button.setAttribute('aria-label', `Copied link to release v${version}`);
+        if (resetTimer) clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          button.classList.remove('copied');
+          label.textContent = 'Copy link';
+          button.setAttribute('aria-label', `Copy link to release v${version}`);
+          resetTimer = null;
+        }, 1500);
+      } catch (error) {
+        /* no clipboard access; leave button unchanged */
+      }
+    });
+    return button;
+  }
+
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise((resolve, reject) => {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'absolute';
+      area.style.left = '-9999px';
+      document.body.appendChild(area);
+      area.select();
+      try {
+        document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
+      } catch (err) {
+        reject(err);
+      } finally {
+        document.body.removeChild(area);
+      }
+    });
+  }
+
+  function highlightFromHash() {
+    const id = decodeURIComponent((window.location.hash || '').replace(/^#/, ''));
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target || !target.classList.contains('release')) return;
+    document.querySelectorAll('.release.targeted').forEach((n) => n.classList.remove('targeted'));
+    target.classList.add('in');
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    // Re-trigger the highlight even if the class is already present.
+    target.classList.remove('targeted');
+    void target.offsetWidth;
+    target.classList.add('targeted');
+  }
+
   function renderReleases(releases) {
     const list = document.getElementById('release-list');
     list.innerHTML = '';
@@ -149,12 +224,14 @@
       .forEach((release, index) => {
         const id = `v${slug(release.version)}`;
         const highlights = (release.highlights || []).map((h) => el('li', { text: h }));
+        const copyBtn = makeCopyButton(id, release.version);
         const card = el('article', { class: 'release-card' }, [
           el('div', { class: 'release-head' }, [
             el('span', { class: 'release-version', text: `v${release.version}` }),
             el('h3', { class: 'release-title', text: release.title }),
             release.tag ? el('span', { class: 'tag', 'data-tag': slug(release.tag), text: release.tag }) : null,
             el('time', { class: 'release-date', datetime: release.date, text: formatDate(release.date) }),
+            copyBtn,
           ]),
           el('p', { class: 'release-body', text: release.description || '' }),
           highlights.length ? el('ul', { class: 'highlights' }, highlights) : null,
@@ -230,11 +307,13 @@
       renderComponents(data.components, data.incidents);
       renderReleases(data.releases);
       renderIncidents(data.incidents, data.components);
+      highlightFromHash();
     } catch (error) {
       renderError(error);
     }
     observeReveals();
   }
 
+  window.addEventListener('hashchange', highlightFromHash);
   document.addEventListener('DOMContentLoaded', load);
 })();

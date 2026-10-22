@@ -12,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install jsonschema
+        run: pip install jsonschema
+
       - name: Validate changelog data and HTML references
         run: python3 scripts/validate.py
 

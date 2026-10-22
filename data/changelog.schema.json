@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elixion-ai.github.io/pulse-demo/data/changelog.schema.json",
+  "title": "Pulse Changelog",
+  "description": "Schema for the Pulse changelog and status page data",
+  "type": "object",
+  "required": ["product", "status", "components", "releases", "incidents"],
+  "additionalProperties": false,
+  "properties": {
+    "product": {
+      "type": "object",
+      "required": ["name", "tagline", "uptime_90d", "updated_at"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Product name"
+        },
+        "tagline": {
+          "type": "string",
+          "description": "Short product description"
+        },
+        "uptime_90d": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "90-day uptime percentage"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp in ISO 8601 format"
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "required": ["level"],
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["operational", "degraded", "outage"],
+          "description": "Current system status level"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable status message"
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "level"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "Unique component identifier"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name for the component"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["operational", "degraded", "outage"],
+            "description": "Current component status"
+          },
+          "incident_days": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date",
+              "description": "Date in YYYY-MM-DD format"
+            },
+            "description": "List of dates when incidents occurred"
+          }
+        }
+      }
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "title"],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Semantic version number"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Release date in YYYY-MM-DD format"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Release title"
+          },
+          "tag": {
+            "type": "string",
+            "enum": ["Feature", "Fix", "Improvement", "Breaking"],
+            "description": "Release category tag"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed release description"
+          },
+          "highlights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of key highlights for the release"
+          }
+        }
+      }
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "impact", "started_at"],
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Incident title"
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["degraded", "outage"],
+            "description": "Severity of the incident"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Incident start time in ISO 8601 format"
+          },
+          "resolved_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Incident resolution time in ISO 8601 format"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Post-incident summary"
+          },
+          "affected": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Component ID affected by the incident"
+            },
+            "description": "List of affected component IDs"
+          }
+        }
+      }
+    }
+  }
+}

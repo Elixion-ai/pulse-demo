@@ -122,6 +122,29 @@
     const updated = data.product && data.product.updated_at;
     document.getElementById('hero-updated').textContent = updated ? `updated ${formatDateTime(updated)}` : '';
 
+    // Compute last incident and days without incidents
+    const incidents = data.incidents || [];
+    const incidentsElement = document.getElementById('hero-incidents');
+    if (incidents.length === 0) {
+      incidentsElement.textContent = 'No incidents on record';
+    } else {
+      const sortedIncidents = incidents
+        .slice()
+        .filter((inc) => inc.resolved_at)
+        .sort((a, b) => new Date(b.resolved_at) - new Date(a.resolved_at));
+
+      if (sortedIncidents.length === 0) {
+        incidentsElement.textContent = 'No incidents on record';
+      } else {
+        const lastIncident = sortedIncidents[0];
+        const resolvedDate = new Date(lastIncident.resolved_at);
+        const today = new Date();
+        const daysSince = Math.floor((today - resolvedDate) / (1000 * 60 * 60 * 24));
+        const formattedDate = formatDate(lastIncident.resolved_at);
+        incidentsElement.textContent = `Last incident: ${formattedDate} · ${daysSince} days without incidents`;
+      }
+    }
+
     const uptime = Number(data.product && data.product.uptime_90d);
     countUp(document.getElementById('stat-uptime'), Number.isFinite(uptime) ? uptime : 100, 2);
     countUp(document.getElementById('stat-releases'), (data.releases || []).length, 0);

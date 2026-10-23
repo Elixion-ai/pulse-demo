@@ -28,10 +28,37 @@
     return date.toLocaleDateString(undefined, opts || { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  function formatDateTime(iso) {
+  // Relative text for recent dates ("today", "3 days ago"), falling back to a
+  // normal date beyond 30 days. The full, localised date/time is returned as a
+  // separate title so hovering a <time> element reveals it.
+  function relativeDate(iso, now) {
     const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return iso;
-    return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    if (Number.isNaN(date.getTime())) return { text: String(iso), title: String(iso) };
+
+    const reference = now || new Date();
+    const fullOpts = { year: 'numeric', month: 'short', day: 'numeric' };
+    const hasTime = /[T ]\d{2}:\d{2}/.test(String(iso));
+    const title = hasTime
+      ? date.toLocaleString(undefined, { ...fullOpts, hour: '2-digit', minute: '2-digit' })
+      : date.toLocaleDateString(undefined, fullOpts);
+
+    const startOfDay = (d) => Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    const dayDiff = Math.round((startOfDay(reference) - startOfDay(date)) / 86400000);
+
+    let text;
+    if (dayDiff < 0 || dayDiff > 30) {
+      text = date.toLocaleDateString(undefined, fullOpts);
+    } else if (dayDiff === 0) {
+      text = 'today';
+    } else if (dayDiff === 1) {
+      text = 'yesterday';
+    } else if (dayDiff < 7) {
+      text = `${dayDiff} days ago`;
+    } else {
+      const weeks = Math.floor(dayDiff / 7);
+      text = weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+    }
+    return { text, title };
   }
 
   function formatDuration(startIso, endIso) {
@@ -120,7 +147,13 @@
     document.getElementById('hero-tagline').textContent =
       (data.status && data.status.message) || (data.product && data.product.tagline) || '';
     const updated = data.product && data.product.updated_at;
-    document.getElementById('hero-updated').textContent = updated ? `updated ${formatDateTime(updated)}` : '';
+    const heroUpdated = document.getElementById('hero-updated');
+    heroUpdated.innerHTML = '';
+    if (updated) {
+      const rel = relativeDate(updated);
+      heroUpdated.appendChild(document.createTextNode('updated '));
+      heroUpdated.appendChild(el('time', { datetime: updated, title: rel.title, text: rel.text }));
+    }
 
     const uptime = Number(data.product && data.product.uptime_90d);
     countUp(document.getElementById('stat-uptime'), Number.isFinite(uptime) ? uptime : 100, 2);
@@ -198,7 +231,10 @@
             el('span', { class: 'release-version', text: `v${release.version}` }),
             el('h3', { class: 'release-title', text: release.title }),
             release.tag ? el('span', { class: 'tag', 'data-tag': slug(release.tag), text: release.tag }) : null,
-            el('time', { class: 'release-date', datetime: release.date, text: formatDate(release.date) }),
+            (() => {
+              const rel = relativeDate(release.date);
+              return el('time', { class: 'release-date', datetime: release.date, title: rel.title, text: rel.text });
+            })(),
           ]),
           el('p', { class: 'release-body', text: release.description || '' }),
           highlights.length ? el('ul', { class: 'highlights' }, highlights) : null,
@@ -225,7 +261,10 @@
         list.appendChild(
           el('li', { class: 'incident reveal', 'data-impact': incident.impact || 'degraded', style: `transition-delay:${index * 70}ms` }, [
             el('div', { class: 'incident-when' }, [
-              el('time', { datetime: incident.started_at, text: formatDateTime(incident.started_at) }),
+              (() => {
+                const rel = relativeDate(incident.started_at);
+                return el('time', { datetime: incident.started_at, title: rel.title, text: rel.text });
+              })(),
               el('div', null, [el('span', { class: 'incident-duration', text: duration })]),
             ]),
             el('div', null, [

@@ -3,7 +3,7 @@
     "name": "Pulse",
     "tagline": "Release notes and live status for a product people depend on.",
     "uptime_90d": 99.97,
-    "updated_at": "2026-10-20T18:30:00Z"
+    "updated_at": "2026-10-21T09:00:00Z"
   },
   "status": {
     "level": "operational",
@@ -23,6 +23,14 @@
     { "id": "billing", "name": "Billing", "level": "operational", "incident_days": ["2026-10-14"] }
   ],
   "releases": [
+    {
+      "version": "1.5.0",
+      "date": "2026-10-21",
+      "title": "Webhook retries with exponential backoff",
+      "tag": "Feature",
+      "description": "Webhook delivery is now resilient to temporary failures. Deliveries retry up to 5 times with exponential backoff and jitter.",
+      "highlights": ["Up to 5 retries", "Jittered backoff", "Delivery log per endpoint"]
+    },
     {
       "version": "1.4.0",
       "date": "2026-10-19",

@@ -4,7 +4,7 @@
   'use strict';
 
   const DATA_URL = 'data/changelog.json';
-  const UPTIME_DAYS = 90;
+  const UPTIME_DAYS = 30;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------- helpers ----------
@@ -186,7 +186,7 @@
         const level = levels.get(day) || 'operational';
         if (level !== 'operational') badDays += 1;
         const labels = { operational: 'Operational', degraded: 'Degraded', outage: 'Outage' };
-        grid.appendChild(el('span', { class: 'day', 'data-level': level, 'data-label': `${formatDate(day, { month: 'short', day: 'numeric' })} · ${labels[level]}` }));
+        grid.appendChild(el('span', { class: 'day', 'data-level': level, 'data-label': `${formatDate(day, { month: 'short', day: 'numeric' })} · ${labels[level]}`, tabindex: '0', role: 'button', 'aria-label': `${formatDate(day, { month: 'short', day: 'numeric' })} · ${labels[level]}` }));
       }
       const pct = (((UPTIME_DAYS - badDays) / UPTIME_DAYS) * 100).toFixed(2);
 

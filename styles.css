@@ -186,6 +186,30 @@ code { font-family: var(--mono); font-size: 0.85em; background: var(--surface-st
 }
 .component-uptime { font-family: var(--mono); font-weight: 600; color: var(--muted); font-size: 0.9rem; }
 
+/* ---------- Tag filter ---------- */
+.tag-filter {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px;
+  padding: 14px 16px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.tag-filter-btn {
+  font-family: var(--font); font-size: 0.82rem; font-weight: 600;
+  padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: pointer; transition: all .2s ease;
+}
+.tag-filter-btn:hover {
+  border-color: var(--border-strong); background: var(--surface-strong);
+  color: var(--text);
+}
+.tag-filter-btn:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.tag-filter-btn.active, .tag-filter-btn[aria-pressed="true"] {
+  background: var(--accent); border-color: var(--accent);
+  color: #fff; box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+}
+
 /* ---------- Timeline ---------- */
 .timeline { list-style: none; margin: 0; padding: 0 0 0 28px; position: relative; }
 .timeline::before {

@@ -202,7 +202,7 @@
     });
   }
 
-  function renderReleases(releases) {
+  function renderReleases(releases, activeFilter = null) {
     const list = document.getElementById('release-list');
     list.innerHTML = '';
     if (!releases || releases.length === 0) {
@@ -210,7 +210,16 @@
       return;
     }
 
-    releases
+    const filtered = activeFilter && activeFilter !== 'all'
+      ? releases.filter((r) => slug(r.tag) === activeFilter)
+      : releases;
+
+    if (filtered.length === 0) {
+      list.appendChild(el('li', { class: 'empty', text: 'No releases match this filter.' }));
+      return;
+    }
+
+    filtered
       .slice()
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .forEach((release, index) => {
@@ -268,6 +277,48 @@
     list.appendChild(el('li', { class: 'empty', text: `Could not load changelog: ${error.message}` }));
   }
 
+  // ---------- tag filter ----------
+  function renderTagFilter(releases) {
+    const filterContainer = document.getElementById('tag-filter');
+    if (!filterContainer) return;
+    filterContainer.innerHTML = '';
+
+    // Extract unique tags from releases
+    const tagSet = new Set();
+    (releases || []).forEach((release) => {
+      if (release.tag) tagSet.add(release.tag);
+    });
+    const tags = ['All', ...Array.from(tagSet).sort()];
+
+    let activeFilter = 'all';
+
+    function updateFilter(selectedTag) {
+      activeFilter = selectedTag;
+      // Update button states
+      filterContainer.querySelectorAll('button').forEach((btn) => {
+        const isActive = btn.dataset.filter === activeFilter;
+        btn.setAttribute('aria-pressed', isActive);
+        btn.classList.toggle('active', isActive);
+      });
+      // Re-render releases
+      renderReleases(releases, activeFilter);
+      observeReveals();
+    }
+
+    tags.forEach((tag) => {
+      const filterValue = slug(tag);
+      const button = el('button', {
+        class: 'tag-filter-btn',
+        'data-filter': filterValue,
+        'aria-pressed': filterValue === 'all',
+        text: tag,
+      });
+      if (filterValue === 'all') button.classList.add('active');
+      button.addEventListener('click', () => updateFilter(filterValue));
+      filterContainer.appendChild(button);
+    });
+  }
+
   // ---------- scroll reveal ----------
   function observeReveals() {
     const nodes = document.querySelectorAll('.reveal:not(.in)');
@@ -296,6 +347,7 @@
       renderMaintenance(data.maintenance);
       renderHero(data);
       renderComponents(data.components, data.incidents);
+      renderTagFilter(data.releases);
       renderReleases(data.releases);
       renderIncidents(data.incidents, data.components);
     } catch (error) {
